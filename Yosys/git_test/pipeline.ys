@@ -1,0 +1,36 @@
+# =====================================================
+# YOSYS SYNTHESIS SCRIPT — FIXED AND STABLE
+# =====================================================
+
+# 1. Load Verilog source
+read_verilog "running.v"
+
+# 2. Set the top module
+hierarchy -check -auto-top
+
+# 3. High-level synthesis
+# Flatten hierarchy for better mapping
+prep 
+synth -flatten
+async2sync
+
+# 4. Map D flip-flops using Nangate OpenCell library
+dfflibmap -liberty "C:/_1/Uni-Files/2025/S2/Topics in Computer Science/projectfiles/lib/NangateOpenCellLibrary_typical.lib"
+
+# 5. Use ABC for combinational logic mapping
+# Add -D 1000 to avoid timing constraint issues with ABC
+abc -D 1000 -liberty "C:/_1/Uni-Files/2025/S2/Topics in Computer Science/projectfiles/lib/NangateOpenCellLibrary_typical.lib"
+
+# 6. Optimize and clean the design
+opt -full
+opt_clean
+clean -purge
+
+# 7. (Optional sanity check)
+check
+
+# 8. Write the final Verilog netlist
+write_verilog -noattr -noexpr -nohex -siminit -renameprefix U_ -sv 4-netlist_git.v
+
+# 9. Report statistics (cell count, area, etc.)
+stat -liberty "C:/_1/Uni-Files/2025/S2/Topics in Computer Science/projectfiles/lib/NangateOpenCellLibrary_typical.lib"

@@ -1,0 +1,28 @@
+# Fixed Yosys pipeline for VERICA compatibility
+
+# Load your Verilog
+read_verilog 2-test.v
+
+# Set top module
+hierarchy -top static_key_leak
+
+# Basic synthesis passes
+proc; opt; fsm; opt; memory; opt
+
+# CRITICAL: Use dfflibmap first to get proper DFF_X1 cells
+dfflibmap -liberty "C:/_1/Uni-Files/2025/S2/Topics in Computer Science/projectfiles/lib/NangateOpenCellLibrary_typical.lib"
+
+# Technology mapping with explicit cell mapping
+techmap
+
+# ABC with proper constraints - force DFF mapping
+abc -liberty "C:/_1/Uni-Files/2025/S2/Topics in Computer Science/projectfiles/lib/NangateOpenCellLibrary_typical.lib" -dff
+
+# Clean up and optimize minimally
+opt_clean
+
+# Write with VERICA-compatible format (FIXED: removed -noparams)
+write_verilog -noattr -noexpr -nohex -renameprefix U -siminit attempt.v
+
+# Show statistics
+stat -liberty "C:/_1/Uni-Files/2025/S2/Topics in Computer Science/projectfiles/lib/NangateOpenCellLibrary_typical.lib"

@@ -1,0 +1,37 @@
+# Synthesis script for obvious_leak.v
+
+# 1. Load Verilog source
+read_verilog "running.v"
+
+# 2. Set the top module
+hierarchy -check -auto-top
+
+# 3. Process RTL constructs
+proc
+
+# 4. Optimize
+opt
+
+# 5. Map D flip-flops to library cells
+dfflibmap -liberty "C:/_1/Uni-Files/2025/S2/Topics in Computer Science/projectfiles/lib/NangateOpenCellLibrary_typical.lib"
+
+# 6. Technology mapping
+techmap
+
+# 7. Optimize again
+opt
+
+# 8. Map combinational logic to library
+abc -liberty "C:/_1/Uni-Files/2025/S2/Topics in Computer Science/projectfiles/lib/NangateOpenCellLibrary_typical.lib"
+
+# 9. Cleanup
+opt_clean
+
+# 10. Sanity check
+check
+
+# 11. Write netlist
+write_verilog -noattr -noexpr -nohex obvious_leak_netlist.v
+
+# 12. Report statistics
+stat -liberty "C:/_1/Uni-Files/2025/S2/Topics in Computer Science/projectfiles/lib/NangateOpenCellLibrary_typical.lib"

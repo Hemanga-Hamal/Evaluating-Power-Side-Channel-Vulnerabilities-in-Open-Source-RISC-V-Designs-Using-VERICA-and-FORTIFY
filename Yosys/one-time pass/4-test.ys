@@ -1,0 +1,25 @@
+# Load your Verilog
+read_verilog 1-test.v
+
+# Set top module
+hierarchy -top static_key_leak
+
+# Run high-level synthesis
+# The -flatten pass is good practice unless you need to preserve hierarchy
+synth -flatten
+
+# Map all flip-flops to the Nangate DFF cell
+dfflibmap -liberty "C:/_1/Uni-Files/2025/S2/Topics in Computer Science/projectfiles/lib/NangateOpenCellLibrary_typical.lib"
+
+# Map combinational logic using ABC and the Nangate library
+abc -liberty "C:/_1/Uni-Files/2025/S2/Topics in Computer Science/projectfiles/lib/NangateOpenCellLibrary_typical.lib"
+
+# Final cleanup and optimization
+opt_clean
+clean -purge
+
+# Write the final Verilog netlist
+write_verilog -sv -noattr -noexpr -nohex -renameprefix U -siminit attempt_3.v
+
+# Show statistics
+stat -liberty "C:/_1/Uni-Files/2025/S2/Topics in Computer Science/projectfiles/lib/NangateOpenCellLibrary_typical.lib"

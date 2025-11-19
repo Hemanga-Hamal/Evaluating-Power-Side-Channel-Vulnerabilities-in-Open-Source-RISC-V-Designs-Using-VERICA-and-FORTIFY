@@ -1,0 +1,31 @@
+# Load your Verilog
+read_verilog 3-test.v
+
+# Set top module
+hierarchy -top static_key_leak
+
+# Basic synthesis passes
+proc; opt; fsm; opt; memory; opt
+
+# CRITICAL: Use dfflibmap first to get proper DFF_X1 cells
+memory_libmap
+dfflibmap -liberty "C:/_1/Uni-Files/2025/S2/Topics in Computer Science/projectfiles/lib/NangateOpenCellLibrary_typical.lib"
+techmap -map "C:/_1/Uni-Files/2025/S2/Topics in Computer Science/projectfiles/lib/dff_map.v"
+
+
+# Technology mapping with explicit cell mapping
+techmap
+
+# ABC with proper constraints - force DFF mapping
+abc -liberty "C:/_1/Uni-Files/2025/S2/Topics in Computer Science/projectfiles/lib/NangateOpenCellLibrary_typical.lib" -dff
+
+# Clean up and optimize minimally
+opt_clean
+opt_dff
+clean -purge
+
+# Write with VERICA-compatible format
+write_verilog -sv -noattr -noexpr -nohex -renameprefix U -siminit attempt_1.v
+
+# Show statistics
+stat -liberty "C:/_1/Uni-Files/2025/S2/Topics in Computer Science/projectfiles/lib/NangateOpenCellLibrary_typical.lib"
