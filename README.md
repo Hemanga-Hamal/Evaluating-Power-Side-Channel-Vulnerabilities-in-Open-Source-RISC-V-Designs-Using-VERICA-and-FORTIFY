@@ -35,7 +35,7 @@ This project evaluates power side-channel leakage of cryptographic hardware desi
 
 ### Dependencies
 
-#### For VERICA
+#### For VERICA -> Use VERICA install guide. Found in VERICA folder Readme.
 
 ```bash
 sudo apt update
@@ -142,18 +142,6 @@ write_verilog synthesized.v
 stat
 ```
 
-### Vivado Integration
-
-For FPGA synthesis and netlist generation:
-
-1. Create Vivado project with RTL sources
-2. Run synthesis
-3. Export gate-level netlist:
-```tcl
-open_run synth_1
-write_verilog -force netlist.v
-```
-
 ## Test Cases
 
 Test cases are organized in:
@@ -165,7 +153,6 @@ Test cases are organized in:
 Detailed documentation is available in the `Documents/` folder:
 
 - **YOSYS COMMANDS.docx**: Command reference and example flows
-- **vivado pipeline.docx**: Vivado synthesis workflow
 - **Setup WSL.docx**: Complete installation instructions for VERICA and related tools
 - **Documents And Notes.docx**: Project background, paper summaries, and theoretical foundations
 
